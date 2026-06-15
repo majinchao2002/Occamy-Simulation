@@ -952,11 +952,9 @@ SharedMemoryPointToPointNetDevice::AcceptPacket(Ptr<Packet> packet, uint32_t ind
 
     }else if(m_switch->GetEnqueueMethod() == Switch::MULTILAYER_DT){
 
-        Ptr<Switch> global_switch = m_node->m_switch;
-        if(!global_switch->first_flag){ //only need to call one
-            // std::cout<<"call "<<std::endl;
+        if(!m_switch->first_flag){ //one per MMU
             TokenAdd();
-        } 
+        }
 
 
 
@@ -1661,15 +1659,19 @@ SharedMemoryPointToPointNetDevice::Update(double nanodelay)
 
 void
 SharedMemoryPointToPointNetDevice::DropCheck()
-{   
-    // if(m_dropType == DropType::RR)
-    // {
-    //     DropRR();
-    // }else if(m_dropType == DropType::TOKEN)
-    // {
-    //     DropTOKEN();
-    // }
-    //do nothing
+{
+    Ptr<Switch> m_switch = GetMMUSwitch();
+    if(m_switch->GetEnqueueMethod() != Switch::MULTILAYER_DT){
+        return;
+    }
+    if(m_switch->token_num <= 0){
+        return;
+    }
+    if(m_dropType == DropType::TOKEN){
+        DropTOKEN();
+    }else if(m_dropType == DropType::LONGTOKEN){
+        DropLONGTOKEN();
+    }
 }
 
 void
@@ -1752,68 +1754,49 @@ SharedMemoryPointToPointNetDevice::ShowMMU()
 
 void
 SharedMemoryPointToPointNetDevice::TokenAdd()
-{   
-
+{
     Ptr<Switch> m_switch = GetMMUSwitch();
     if(m_switch->GetEnqueueMethod() != Switch::MULTILAYER_DT){
         return;
     }
-    Ptr<Switch> global_switch = m_node->m_switch;
-    if(!global_switch->first_flag){
-        global_switch->first_flag = true; //only call one time
-        m_switch->last_head_drop_port = (this->GetIfIndex() - 1) / 8 * 8 + 1 ; 
+    if(!m_switch->first_flag){
+        m_switch->first_flag = true; //one per MMU
+        m_switch->last_head_drop_port = (this->GetIfIndex() - 1) / 8 * 8 + 1 ;
         m_switch->last_head_drop_queue = 0;
-
     }
 
-          
-    Time token_add_internal = m_bps.CalculateBytesTxTime (1500) / global_switch->port_num;
+    Time token_add_internal = m_bps.CalculateBytesTxTime (1500) / m_switch->port_num;
     if(token_add_internal < NanoSeconds(1)){
         token_add_internal = NanoSeconds(1);
     }
-    global_switch->token_num += 8;
-    if(global_switch->token_num > global_switch->max_token_num)
+    m_switch->token_num += 8;
+    if(m_switch->token_num > m_switch->max_token_num)
     {
-        global_switch->token_num = global_switch->max_token_num;
+        m_switch->token_num = m_switch->max_token_num;
     }
-    
-    // std::cout<<"+ token: "<<GetToken()<<"    "<<token_add_internal<<std::endl;
-    // std::cout<<Simulator::Now ().GetNanoSeconds ()<<std::endl;
+
     if(Simulator::Now ().GetNanoSeconds () < 1100000000){
         Simulator::Schedule (token_add_internal, &SharedMemoryPointToPointNetDevice::TokenAdd, this);
     }
-    if(global_switch->token_num > 0 && m_dropType == DropType::TOKEN)
-    {   
-        // std::cout<<"will delete"<<std::endl;
-        DropTOKEN();
-    }else if(global_switch->token_num > 0 && m_dropType == DropType::LONGTOKEN)
-    {   
-        // std::cout<<"will delete"<<std::endl;
-        DropLONGTOKEN();
-    }
-    return;
-    
+    // drops are triggered by DropCheck on dequeue, gated by token_num
 }
 
 void
 SharedMemoryPointToPointNetDevice::TokenDelete(uint32_t pkt_size)
-{   
+{
     Ptr<Switch> m_switch = GetMMUSwitch();
     if(m_switch->GetEnqueueMethod() != Switch::MULTILAYER_DT){
         return;
     }
-    Ptr<Switch> global_switch = m_node->m_switch;
-    double ceil_num = 1.0 * pkt_size / global_switch->ceil_size;
-    global_switch->token_num -= std::ceil(ceil_num);
-    
-    // std::cout<<"- pktsize: "<<pkt_size<<"   "<<std::ceil(ceil_num)<< " " <<GetToken()<<std::endl;
+    double ceil_num = 1.0 * pkt_size / m_switch->ceil_size;
+    m_switch->token_num -= std::ceil(ceil_num);
 }
 
 int64_t
 SharedMemoryPointToPointNetDevice::GetToken()
-{   
-    Ptr<Switch> global_switch = m_node->m_switch;
-    return global_switch->token_num;
+{
+    Ptr<Switch> m_switch = GetMMUSwitch();
+    return m_switch->token_num;
 }
 
 void
