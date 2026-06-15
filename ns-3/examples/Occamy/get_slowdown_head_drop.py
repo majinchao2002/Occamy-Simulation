@@ -238,7 +238,7 @@ def report_gap():
 
 
 if __name__ == "__main__":
-    file_dir = "100g_benchmark/"
+    file_dir = "100g_head_drop/"
     data_output_file = "data/100g_head_drop.txt"
     figure_output_folder = "figure/100g_head_drop/"
 

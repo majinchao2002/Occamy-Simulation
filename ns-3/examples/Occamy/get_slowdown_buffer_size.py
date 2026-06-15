@@ -227,7 +227,7 @@ def report_occamy_vs_dt():
 
 
 if __name__ == "__main__":
-    file_dir = "100g_benchmark/"
+    file_dir = "100g_buffer_size/"
     raw_output_file = "data/100g_buffer_size.csv"
     improvement_output_file = "data/100g_buffer_size_improvement.csv"
     figure_output_folder = "figure/100g_buffer_size/"

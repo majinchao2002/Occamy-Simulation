@@ -78,6 +78,9 @@ main (int argc, char *argv[])
     uint32_t rto = 5 * 1000; // in MicroSeconds, 5 milliseconds.
 	cmd.AddValue ("rto", "min Retransmission timeout value in MicroSeconds", rto);
 
+    std::string outDir = "100g_benchmark";
+    cmd.AddValue ("outDir", "subdirectory under examples/Occamy/ to store FlowMonitor XML", outDir);
+
 
 
     //create topo============================================
@@ -582,7 +585,7 @@ main (int argc, char *argv[])
     Simulator::Run ();
     
 
-    std::string resultFolder = "./examples/Occamy/100g_benchmark/";
+    std::string resultFolder = "./examples/Occamy/" + outDir + "/";
     if (!fs::exists(resultFolder)) {
         std::cout << "Folder does not exist. Creating: " << resultFolder << std::endl;
 

@@ -43,8 +43,8 @@ for bufferPerPortPerGbps in "${bufferPerPortPerGbps_array[@]}"; do
                     done
 
                     N=$((N + 1))
-                    echo "./ns3 run \"examples/Occamy/occamy_100g_benchmark.cc --method=${method} --alpha=${alpha} --tcpProtocol=${tcpProtocol} --webLoad=${webLoad} --requestSizeRate=${requestSizeRate} --requestFlowRate=${requestFlowRate} --bufferSize=${bufferSize} --nPrior=${nPrior}\" # ${bufferPerPortPerGbps}KB/port/Gbps"
-                    ./ns3 run "examples/Occamy/occamy_100g_benchmark.cc --method=${method} --alpha=${alpha} --tcpProtocol=${tcpProtocol} --webLoad=${webLoad} --requestSizeRate=${requestSizeRate} --requestFlowRate=${requestFlowRate} --bufferSize=${bufferSize} --nPrior=${nPrior}" > /dev/null &
+                    echo "./ns3 run \"examples/Occamy/occamy_100g_benchmark.cc --method=${method} --alpha=${alpha} --tcpProtocol=${tcpProtocol} --webLoad=${webLoad} --requestSizeRate=${requestSizeRate} --requestFlowRate=${requestFlowRate} --bufferSize=${bufferSize} --nPrior=${nPrior} --outDir=100g_buffer_size\" # ${bufferPerPortPerGbps}KB/port/Gbps"
+                    ./ns3 run "examples/Occamy/occamy_100g_benchmark.cc --method=${method} --alpha=${alpha} --tcpProtocol=${tcpProtocol} --webLoad=${webLoad} --requestSizeRate=${requestSizeRate} --requestFlowRate=${requestFlowRate} --bufferSize=${bufferSize} --nPrior=${nPrior} --outDir=100g_buffer_size" > /dev/null &
                     sleep 2
                     echo "$N"
                 done

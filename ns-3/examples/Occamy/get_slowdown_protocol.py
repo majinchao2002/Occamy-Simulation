@@ -11,9 +11,9 @@ data = {}
 data_array = {}
 method_array = ["DT-1.0", "PUSHOUT-1.0", "ABM-2.0", "pBuffer-8.0"]
 method_label = {
-    "DT-1.0": "DT alpha=1",
+    "DT-1.0": "DT",
     "PUSHOUT-1.0": "Pushout",
-    "ABM-2.0": "DT alpha=8",
+    "ABM-2.0": "ABM",
     "pBuffer-8.0": "Occamy",
 }
 tcp_protocol_array = ["TIMELY", "HPCC", "THETAPOWERTCP"]
@@ -172,7 +172,7 @@ def draw(folder_name):
 
 
 if __name__ == "__main__":
-    file_dir = "100g_benchmark/"
+    file_dir = "100g_protocol/"
     data_output_file = "data/100g_protocol.csv"
     figure_output_folder = "figure/100g_protocol/"
 

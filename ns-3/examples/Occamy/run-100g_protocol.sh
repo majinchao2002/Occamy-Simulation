@@ -36,8 +36,8 @@ for webLoad in "${webLoad_array[@]}"; do
             done
 
             N=$((N + 1))
-            echo "./ns3 run \"examples/Occamy/occamy_100g_benchmark.cc --method=${method} --alpha=${alpha} --tcpProtocol=${tcpProtocol} --webLoad=${webLoad} --requestSizeRate=${requestSizeRate} --requestFlowRate=${requestFlowRate} --bufferSize=${bufferSize} --nPrior=${nPrior}\""
-            ./ns3 run "examples/Occamy/occamy_100g_benchmark.cc --method=${method} --alpha=${alpha} --tcpProtocol=${tcpProtocol} --webLoad=${webLoad} --requestSizeRate=${requestSizeRate} --requestFlowRate=${requestFlowRate} --bufferSize=${bufferSize} --nPrior=${nPrior}" > /dev/null &
+            echo "./ns3 run \"examples/Occamy/occamy_100g_benchmark.cc --method=${method} --alpha=${alpha} --tcpProtocol=${tcpProtocol} --webLoad=${webLoad} --requestSizeRate=${requestSizeRate} --requestFlowRate=${requestFlowRate} --bufferSize=${bufferSize} --nPrior=${nPrior} --outDir=100g_protocol\""
+            ./ns3 run "examples/Occamy/occamy_100g_benchmark.cc --method=${method} --alpha=${alpha} --tcpProtocol=${tcpProtocol} --webLoad=${webLoad} --requestSizeRate=${requestSizeRate} --requestFlowRate=${requestFlowRate} --bufferSize=${bufferSize} --nPrior=${nPrior} --outDir=100g_protocol" > /dev/null &
             sleep 2
             echo "$N"
         done
