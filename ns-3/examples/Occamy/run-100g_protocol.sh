@@ -13,7 +13,7 @@ nPrior=2
 requestFlowRate=200.0
 requestSizeRate=0.4
 bufferSize=$(python3 -c "print(int(${BUFFER_PER_PORT_PER_GBPS}*1024*8*${SERVER_LEAF_CAP}))")
-N_CORES=40
+N_CORES=20
 N=0
 
 running_sims() {
@@ -29,6 +29,16 @@ for webLoad in "${webLoad_array[@]}"; do
         for methodAlpha in "${method_alpha_array[@]}"; do
             method=${methodAlpha%%:*}
             alpha=${methodAlpha##*:}
+
+            outFile="examples/Occamy/100g_protocol/${method}-${alpha}~${tcpProtocol}-${webLoad}-${requestSizeRate}-${requestFlowRate}-${bufferSize}-${nPrior}.xml"
+            if [ -f "$outFile" ]; then
+                echo "SKIP (exists): $outFile"
+                continue
+            fi
+            if pgrep -f "method=${method}.*tcpProtocol=${tcpProtocol}.*webLoad=${webLoad}" > /dev/null 2>&1; then
+                echo "SKIP (running): ${method}-${alpha}~${tcpProtocol}-webLoad=${webLoad}"
+                continue
+            fi
 
             while [ "$(running_sims)" -gt "$N_CORES" ]; do
                 sleep 10
