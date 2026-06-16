@@ -13,7 +13,7 @@ nPrior=2
 requestFlowRate=200.0
 requestSizeRate=0.4
 bufferSize=$(python3 -c "print(int(${BUFFER_PER_PORT_PER_GBPS}*1024*8*${SERVER_LEAF_CAP}))")
-N_CORES=${N_CORES:-20}
+N_CORES=40
 N=0
 
 running_sims() {
@@ -21,7 +21,7 @@ running_sims() {
 }
 
 method_alpha_array=("DT:1.0" "PUSHOUT:1.0" "ABM:2.0" "pBuffer:8.0")
-tcpProtocol_array=("TIMELY" "HPCC" "THETAPOWERTCP")
+tcpProtocol_array=("CUBIC" "DCTCP" "TIMELY" "HPCC")
 webLoad_array=(0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9)
 
 for webLoad in "${webLoad_array[@]}"; do
